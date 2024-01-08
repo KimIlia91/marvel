@@ -1,7 +1,7 @@
 import { Component, Fragment } from 'react';
-import MarvelService from '../../services/marvelService';
-import Spinner from '../spinner/spinner';
-import ErrorMessage from '../errorMessage/errorMessage';
+import MarvelService from '../../services/MarvelService';
+import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
 import './charInfo.scss';
 
@@ -73,8 +73,9 @@ class CharInfo extends Component {
 
 const View = ({ char }) => {
     const { thumbnail, name, homepage, wiki, description, comics } = char;
-    const imgContainStyle = thumbnail.split('/')[10] === 'image_not_available.jpg' 
-                                        ? { objectFit: 'fill' } 
+    const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
+                         || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
+                                        ? { objectFit: 'contain' } 
                                         : null;
 
     const elements = comics.length > 0 ? comics.slice(0, 10).map((elem, i) => {
@@ -88,26 +89,26 @@ const View = ({ char }) => {
     return (
         <Fragment>
             <div className="char__basics">
-                    <img src={ thumbnail } alt={ name } style={ imgContainStyle }/>
-                    <div>
-                        <div className="char__info-name">{ name }</div>
-                        <div className="char__btns">
-                            <a href={ homepage } className="button button__main">
-                                <div className="inner">homepage</div>
-                            </a>
-                            <a href={ wiki } className="button button__secondary">
-                                <div className="inner">Wiki</div>
-                            </a>
-                        </div>
+                <img src={ thumbnail } alt={ name } style={ imgContainStyle }/>
+                <div>
+                    <div className="char__info-name">{ name }</div>
+                    <div className="char__btns">
+                        <a href={ homepage } className="button button__main">
+                            <div className="inner">homepage</div>
+                        </a>
+                        <a href={ wiki } className="button button__secondary">
+                            <div className="inner">Wiki</div>
+                        </a>
                     </div>
                 </div>
-                <div className="char__descr">
-                    { description }
-                </div>
-                <div className="char__comics">Comics:</div>
-                <ul className="char__comics-list">
-                    { elements }
-                </ul>
+            </div>
+            <div className="char__descr">
+                { description }
+            </div>
+            <div className="char__comics">Comics:</div>
+            <ul className="char__comics-list">
+                { elements }
+            </ul>
         </Fragment>
     )
 }

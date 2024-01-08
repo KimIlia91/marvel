@@ -1,8 +1,8 @@
 import { Component } from 'react';
-import Spinner from '../spinner/spinner';
-import MarvelService from '../../services/marvelService';
+import Spinner from '../spinner/Spinner';
+import MarvelService from '../../services/MarvelService';
 import './randomChar.scss';
-import ErrorMessage from '../errorMessage/errorMessage';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import mjolnir from '../../resources/img/mjolnir.png';
 
 class RandomChar extends Component {
@@ -73,7 +73,8 @@ class RandomChar extends Component {
 
 const View = ({ char }) => {
     const { thumbnail, name, description, homepage, wiki } = char;
-    const imgContainStyle = thumbnail.split('/')[10] === 'image_not_available.jpg' 
+    const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
+                            || '4c002e0305708.gif' === char.thumbnail.split('/')[10]
                                         ? { objectFit: 'fill' } 
                                         : null;
 
