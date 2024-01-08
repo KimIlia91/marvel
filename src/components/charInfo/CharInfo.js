@@ -77,13 +77,13 @@ const View = ({ char }) => {
                                         ? { objectFit: 'fill' } 
                                         : null;
 
-    const elements = comics.map((elem, i) => {
+    const elements = comics.length > 0 ? comics.slice(0, 10).map((elem, i) => {
         return (
             <li key={ i } className="char__comics-item">
                 { elem.name }
             </li>
         )
-    })
+    }) : "No information";
 
     return (
         <Fragment>
