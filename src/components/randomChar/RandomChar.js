@@ -15,12 +15,18 @@ class RandomChar extends Component {
     marvelService = new MarvelService();
 
     updateChar = () => {
-        console.log('update');
         const id = Math.floor(Math.random() * (1011500 - 1011000) + 1011000);
+        this.onCharLoading();
         this.marvelService
             .getCharacterByIdAsync(id)
             .then(this.onCharLoaded)
             .catch(this.onError);
+    }
+
+    onCharLoading = () => {
+        this.setState({
+            loading: true
+        })
     }
     
     onCharLoaded = (char) => {
@@ -67,12 +73,15 @@ class RandomChar extends Component {
 
 const View = ({ char }) => {
     const { thumbnail, name, description, homepage, wiki } = char;
+    const imgContainStyle = thumbnail.split('/')[10] === 'image_not_available.jpg' 
+                                        ? { objectFit: 'fill' } 
+                                        : null;
 
     return (
         <div className="randomchar__block">
-            <img src={ thumbnail } alt="Random character" className="randomchar__img"/>
+            <img src={ thumbnail } alt="Random character" className="randomchar__img" style={ imgContainStyle } />
             <div className="randomchar__info">
-                <p className="randomchar__name">{ name }</p>
+                <p className="randomchar__name">{ name.length > 21 ? `${name.slice(0, 21)}...` : name }</p>
                 <p className="randomchar__descr">
                     { description }
                 </p>
