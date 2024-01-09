@@ -15,6 +15,11 @@
             line-height: 29px;
             text-transform: uppercase;
         }
+        &-group {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
         .skeleton {
             margin-top: 30px;
         }
@@ -30,9 +35,8 @@
         }
     }
     &__btns {
-        margin-top: 25px;
         a:nth-child(2) {
-            margin-top: 20px;
+            margin-top: 10px;
         }
     }
     &__descr {

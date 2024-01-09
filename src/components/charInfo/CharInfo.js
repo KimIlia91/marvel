@@ -29,7 +29,7 @@ class CharInfo extends Component {
         const parentElement = document.querySelector('.char__content');
         const offset = parentElement.getBoundingClientRect();
         if (offset.top < 0) {
-            this.setState({ offsetTop: offset.top * -1 + 10 });
+            this.setState({ offsetTop: offset.top * -1 + 30  });
         } else {
             this.setState({ offsetTop: 0 });
         }
@@ -111,8 +111,8 @@ const View = ({ char }) => {
         <Fragment>
             <div className="char__basics">
                 <img src={ thumbnail } alt={ name } style={ imgContainStyle }/>
-                <div>
-                    <div className="char__info-name">{ name.length > 16 ? `${name.slice(0, 16)}...` : name }</div>
+                <div className='char__info-group'>
+                    <div className="char__info-name">{ name }</div>
                     <div className="char__btns">
                         <a href={ homepage } className="button button__main">
                             <div className="inner">homepage</div>
