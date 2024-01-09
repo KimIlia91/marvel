@@ -10,13 +10,29 @@ class CharInfo extends Component {
     state = {
         char: null,
         loading: false,
-        error: false
+        error: false,
+        offsetTop: 0
     }
 
     marvelService = new MarvelService();
 
     componentDidMount() {
         this.updateChar();
+        window.addEventListener('scroll', this.scrollCharInfo);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.scrollCharInfo);
+    }
+
+    scrollCharInfo = () => {
+        const parentElement = document.querySelector('.char__content');
+        const offset = parentElement.getBoundingClientRect();
+        if (offset.top < 0) {
+            this.setState({ offsetTop: offset.top * -1 + 10 });
+        } else {
+            this.setState({ offsetTop: 0 });
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -57,7 +73,7 @@ class CharInfo extends Component {
     }
 
     render() {
-        const { char, loading, error } = this.state;
+        const { char, loading, error, offsetTop } = this.state;
 
         const skeleton = char || loading || error ? null : <Skeleton/>; 
         const errorMessage = error ? <ErrorMessage/> : null;
@@ -65,7 +81,7 @@ class CharInfo extends Component {
         const content = !(loading || error || !char) ? <View char={ char }/> : null;
 
         return (
-            <div className="char__info">
+            <div className="char__info" style={ { top: `${offsetTop}px` } }>
                 { skeleton } { errorMessage } { spinner } { content }
             </div>
         )
@@ -76,8 +92,12 @@ const View = ({ char }) => {
     const { thumbnail, name, homepage, wiki, description, comics } = char;
     const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
                          || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
-                                        ? { objectFit: 'contain' } 
+                                        ? { objectFit: 'fill' } 
                                         : null;
+
+    const subDesc = description === '' ? 'No description' : description.length > 240 
+                                                                ? `${description.slice(0, 240)}...` 
+                                                                : description;
 
     const elements = comics.length > 0 ? comics.slice(0, 10).map((elem, i) => {
         return (
@@ -92,7 +112,7 @@ const View = ({ char }) => {
             <div className="char__basics">
                 <img src={ thumbnail } alt={ name } style={ imgContainStyle }/>
                 <div>
-                    <div className="char__info-name">{ name }</div>
+                    <div className="char__info-name">{ name.length > 16 ? `${name.slice(0, 16)}...` : name }</div>
                     <div className="char__btns">
                         <a href={ homepage } className="button button__main">
                             <div className="inner">homepage</div>
@@ -104,7 +124,7 @@ const View = ({ char }) => {
                 </div>
             </div>
             <div className="char__descr">
-                { description }
+                { subDesc }
             </div>
             <div className="char__comics">Comics:</div>
             <ul className="char__comics-list">

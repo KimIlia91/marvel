@@ -1,9 +1,9 @@
 import { Component } from 'react';
 import Spinner from '../spinner/Spinner';
 import MarvelService from '../../services/MarvelService';
-import './randomChar.scss';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import mjolnir from '../../resources/img/mjolnir.png';
+import './randomChar.scss';
 
 class RandomChar extends Component {
     state = {
@@ -14,22 +14,32 @@ class RandomChar extends Component {
 
     marvelService = new MarvelService();
 
+    componentDidMount() {
+        this.updateChar();
+    }
+
     updateChar = () => {
-        const id = Math.floor(Math.random() * (1011500 - 1011000) + 1011000);
+        const id = Math.floor(Math.random() * (1010789 - 1009146) + 1009146);
         this.onCharLoading();
         this.marvelService
-            .getCharacterByIdAsync(id)
+            .getCharacterByIdAsync(id, true)
             .then(this.onCharLoaded)
             .catch(this.onError);
     }
 
     onCharLoading = () => {
         this.setState({
-            loading: true
+            loading: true,
+            error: false
         })
     }
     
     onCharLoaded = (char) => {
+        if (char.code === 404) {
+            this.updateChar();
+            return;
+        }
+
         this.setState({ char, loading: false });
     }
 
@@ -38,10 +48,6 @@ class RandomChar extends Component {
             loading: false,
             error: true
         });
-    }
-
-    componentDidMount() {
-        this.updateChar();
     }
 
     render() {
@@ -78,13 +84,19 @@ const View = ({ char }) => {
                                         ? { objectFit: 'fill' } 
                                         : null;
 
+    const subDesc = description === '' ? 'No description' : description.length > 180 
+                                                                ? `${description.slice(0, 180)}...` 
+                                                                : description;
+
+    const subName = name.length > 21 ? `${name.slice(0, 21)}...` : name;
+
     return (
         <div className="randomchar__block">
             <img src={ thumbnail } alt="Random character" className="randomchar__img" style={ imgContainStyle } />
             <div className="randomchar__info">
-                <p className="randomchar__name">{ name.length > 21 ? `${name.slice(0, 21)}...` : name }</p>
+                <p className="randomchar__name">{ subName }</p>
                 <p className="randomchar__descr">
-                    { description }
+                    { subDesc }
                 </p>
                 <div className="randomchar__btns">
                     <a href={ homepage } className="button button__main">

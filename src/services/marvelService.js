@@ -1,13 +1,18 @@
 
-class MarvelService {
+class MarvelService{
     _apiBase = 'https://gateway.marvel.com:443/v1/public';
     _apiKey = 'apikey=d256a3c14362945396d37f6684edfc32';
     _baseOffset = 210;
+    _randomId = false;
 
     getResourcesAsync = async (url) => {
         let res = await fetch(url);
 
         if (!res.ok) {
+            if (res.status === 404 && this._randomId) {
+                return await res.json();
+            }
+
             throw new Error(`Could not fetch ${url}, status: ${res.status}`);
         }
         
@@ -19,8 +24,17 @@ class MarvelService {
         return res.data.results.map(this._transformCharacter);
     }
 
-    getCharacterByIdAsync = async (id) => {
+    getCharacterByIdAsync = async (id, randomId = this._randomId) => {
+        if (randomId) {
+            this._randomId = true;
+        }
+
        const res = await this.getResourcesAsync(`${this._apiBase}/characters/${id}?${this._apiKey}`);
+
+       if (res.code === 404) {
+            return res;
+       }
+
        return this._transformCharacter(res.data.results[0]);
     }
 
@@ -28,11 +42,7 @@ class MarvelService {
         return {
             id: res.id,
             name: res.name,
-            description: res.description === '' 
-                ? 'No description' 
-                : res.description.length > 200 
-                    ? `${res.description.slice(0, 200)}...` 
-                    : res.description,
+            description: res.description,
             thumbnail: `${res.thumbnail.path}.${res.thumbnail.extension}`,
             homepage: res.urls[0].url,
             wiki: res.urls[1].url,
