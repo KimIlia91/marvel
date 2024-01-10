@@ -92,12 +92,21 @@ class CharList extends Component {
     }
 }
 
-const View = ({ characters, onCharSelected, offset, newItemLoading, onRequest, charEnded, focusOnSelectedChar, setRef }) => {
+const View = ({ characters, 
+                onCharSelected, 
+                offset, 
+                newItemLoading, 
+                onRequest, 
+                charEnded, 
+                focusOnSelectedChar, 
+                setRef }) => {
+
     const elements = characters.map((char, i) => {
         const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
                              || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
                                         ? { objectFit: 'fill' } 
                                         : null;
+                                        
         return (
             <li className="char__item" 
                 tabIndex={0} key={ char.id } 
