@@ -58,6 +58,18 @@ class CharList extends Component {
         }));
     }
 
+    charRefs = [];
+
+    setRef = (ref) => {
+        this.charRefs.push(ref);
+    }
+
+    focusOnSelectedChar = (id) => {
+        this.charRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.charRefs[id].classList.add('char__item_selected');
+        this.charRefs[id].focus();
+    }
+
     render() {
         const { characters, loading, error, offset, newItemLoading, charEnded } = this.state;
         const { onCharSelected } = this.props;
@@ -68,7 +80,9 @@ class CharList extends Component {
                                                     offset={ offset }
                                                     newItemLoading={ newItemLoading }
                                                     onRequest={ this.onRequest }
-                                                    charEnded={ charEnded }/> : null;
+                                                    charEnded={ charEnded }
+                                                    focusOnSelectedChar={ this.focusOnSelectedChar }
+                                                    setRef={ this.setRef }/> : null;
 
         return (
             <div className="char__list">
@@ -78,14 +92,23 @@ class CharList extends Component {
     }
 }
 
-const View = ({ characters, onCharSelected, offset, newItemLoading, onRequest, charEnded }) => {
-    const elements = characters.map(char => {
+const View = ({ characters, onCharSelected, offset, newItemLoading, onRequest, charEnded, focusOnSelectedChar, setRef }) => {
+    const elements = characters.map((char, i) => {
         const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
                              || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
                                         ? { objectFit: 'fill' } 
                                         : null;
         return (
-            <li className="char__item" key={ char.id } onClick={ () => onCharSelected(char.id) }>
+            <li className="char__item" 
+                tabIndex={0} key={ char.id } 
+                ref={ setRef }
+                onClick={ () => { onCharSelected(char.id); focusOnSelectedChar(i); }}
+                onKeyDown={ (e) => {
+                    if (e.key === ' ' || e.key === "Enter") {
+                        onCharSelected(char.id);
+                        focusOnSelectedChar(i);
+                    }
+                } }>
                 <img src={ char.thumbnail } alt={ char.name } style={ imgContainStyle }/>
                 <div className="char__name">{ char.name }</div>
             </li>
