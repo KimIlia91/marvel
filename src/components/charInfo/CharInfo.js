@@ -21,8 +21,14 @@ class CharInfo extends Component {
         window.addEventListener('scroll', this.scrollCharInfo);
     }
 
-    componentDidUpdate() {
+    componentWillUnmount() {
         window.removeEventListener('scroll', this.scrollCharInfo);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.charId !== prevProps.charId) {
+            this.updateChar();
+        }
     }
 
     scrollCharInfo = () => {
@@ -32,12 +38,6 @@ class CharInfo extends Component {
             this.setState({ offsetTop: offset.top * -1 + 30  });
         } else {
             this.setState({ offsetTop: 0 });
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.charId !== prevProps.charId) {
-            this.updateChar();
         }
     }
 
