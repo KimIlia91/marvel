@@ -21,7 +21,7 @@ class CharInfo extends Component {
         window.addEventListener('scroll', this.scrollCharInfo);
     }
 
-    componentWillUnmount() {
+    componentDidUpdate() {
         window.removeEventListener('scroll', this.scrollCharInfo);
     }
 

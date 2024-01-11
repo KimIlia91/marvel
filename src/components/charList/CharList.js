@@ -109,7 +109,8 @@ const View = ({ characters,
                                         
         return (
             <li className="char__item" 
-                tabIndex={0} key={ char.id } 
+                tabIndex={0} 
+                key={ char.id } 
                 ref={ setRef }
                 onClick={ () => { onCharSelected(char.id); focusOnSelectedChar(i); }}
                 onKeyDown={ (e) => {
