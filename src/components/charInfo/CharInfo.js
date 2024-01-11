@@ -18,26 +18,11 @@ class CharInfo extends Component {
 
     componentDidMount() {
         this.updateChar();
-        window.addEventListener('scroll', this.scrollCharInfo);
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.scrollCharInfo);
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.charId !== prevProps.charId) {
             this.updateChar();
-        }
-    }
-
-    scrollCharInfo = () => {
-        const parentElement = document.querySelector('.char__content');
-        const offset = parentElement.getBoundingClientRect();
-        if (offset.top < 0) {
-            this.setState({ offsetTop: offset.top * -1 + 30  });
-        } else {
-            this.setState({ offsetTop: 0 });
         }
     }
 
@@ -73,7 +58,7 @@ class CharInfo extends Component {
     }
 
     render() {
-        const { char, loading, error, offsetTop } = this.state;
+        const { char, loading, error } = this.state;
 
         const skeleton = char || loading || error ? null : <Skeleton/>; 
         const errorMessage = error ? <ErrorMessage/> : null;
@@ -81,7 +66,7 @@ class CharInfo extends Component {
         const content = !(loading || error || !char) ? <View char={ char }/> : null;
 
         return (
-            <div className="char__info" style={ { top: `${offsetTop}px` } }>
+            <div className="char__info">
                 { skeleton } { errorMessage } { spinner } { content }
             </div>
         )
