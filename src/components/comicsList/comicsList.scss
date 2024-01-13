@@ -1,3 +1,5 @@
+@import '../../style/variables.scss';
+
 .comics {
     &__list {
         margin-top: 45px;
@@ -14,6 +16,11 @@
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
             width: 225px;
             height: 345px;
+            &:hover, &:focus {
+                box-shadow: 0 5px 20px $main-color;
+                outline: none;
+                transition: box-shadow 0.5s ease, transform 0.5s ease;
+            }
         }
         &-name {
             margin-top: 10px;
@@ -30,7 +37,7 @@
             text-transform: uppercase;
         }
         &:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
         }
     }
 }

@@ -2,33 +2,25 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import './charList.scss';
 
 const CharList = (props) => {
     const [ characters, setCharacters ] = useState([]);
-    const [ loading, setLoading ] = useState(true);
-    const [ error, setError ] = useState(false);
     const [ newItemLoading, setNewItemLoading ] = useState(false);
     const [ offset, setOffset ] = useState(210);
     const [ charEnded, setCharEnded ] = useState(false);
 
-    const marvelService = new MarvelService();
+    const { loading, error, getAllCharactersAsync } = useMarvelService();
 
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
     }, []);
 
-    const onRequest = (offset) => {
-        onCharListLoading();
-        marvelService
-            .getAllCharactersAsync(offset)
-            .then(onCharLoaded)
-            .catch(onError);
-    }
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        getAllCharactersAsync(offset)
+            .then(onCharLoaded);
     }
 
     const onCharLoaded = (newCharacters) => {
@@ -39,15 +31,9 @@ const CharList = (props) => {
         }
 
         setCharacters(characters => [...characters, ...newCharacters]);
-        setLoading(loading => false);
         setNewItemLoading(newItemLoading => false);
         setOffset(offset => offset + 9);
         setCharEnded(charEnded => ended);
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
     }
 
     const charRefs = useRef([]);
@@ -60,15 +46,15 @@ const CharList = (props) => {
 
     const { onCharSelected } = props;
     const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error) ? <View characters={ characters } 
-                                                onCharSelected={ onCharSelected }
-                                                offset={ offset }
-                                                newItemLoading={ newItemLoading }
-                                                onRequest={ onRequest }
-                                                charEnded={ charEnded }
-                                                focusOnSelectedChar={ focusOnSelectedChar }
-                                                charRefs={ charRefs }/> : null;
+    const spinner = loading && !newItemLoading ? <Spinner/> : null;
+    const content = <View characters={ characters } 
+                            onCharSelected={ onCharSelected }
+                            offset={ offset }
+                            newItemLoading={ newItemLoading }
+                            onRequest={ onRequest }
+                            charEnded={ charEnded }
+                            focusOnSelectedChar={ focusOnSelectedChar }
+                            charRefs={ charRefs }/>;
 
     return (
         <div className="char__list">
