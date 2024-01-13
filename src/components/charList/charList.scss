@@ -18,12 +18,14 @@
     &__item {
         width: 200px;
         height: 318px;
+        border-radius: 4px;
         background-color: $dark;
         box-shadow: 5px 5px 10px rgba(0, 0, 0, .25);
         padding: 15px;
         cursor: pointer;
         transition: 0.3s transform;
         img {
+            border-radius: 4px;
             width: 200px;
             height: 200px;
             object-fit: cover;
@@ -32,6 +34,9 @@
         &:hover, &:focus {
             box-shadow: 0 5px 20px $main-color;
             outline: none;
+            transition: box-shadow 0.5s ease, transform 0.5s ease;
+        }
+        &:not(:hover):not(:focus) {
             transition: box-shadow 0.5s ease, transform 0.5s ease;
         }
         &_selected {
