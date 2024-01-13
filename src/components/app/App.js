@@ -19,9 +19,7 @@ const App = () =>{
         <div className="app">
             <AppHeader/>
             <main>
-                <AppBaner/>
-                <ComicsList />
-                {/* <ErrorBoundary>
+                <ErrorBoundary>
                     <RandomChar/>
                 </ErrorBoundary>
                 <div className="char__content">
@@ -31,7 +29,7 @@ const App = () =>{
                     <ErrorBoundary>
                         <CharInfo charId={ selectedChar }/>
                     </ErrorBoundary>
-                </div> */}
+                </div>
                 <img className="bg-decoration" src={ decoration } alt="vision"/>
             </main>
         </div>

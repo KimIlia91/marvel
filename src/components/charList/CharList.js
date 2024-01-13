@@ -64,20 +64,20 @@ const CharList = (props) => {
 }
 
 function View ({ characters, 
-                 onCharSelected, 
-                 offset, 
-                 newItemLoading, 
-                 onRequest, 
-                 charEnded, 
-                 focusOnSelectedChar, 
-                 charRefs }) {
+    onCharSelected, 
+    offset, 
+    newItemLoading, 
+    onRequest, 
+    charEnded, 
+    focusOnSelectedChar, 
+    charRefs }) {
 
     const elements = characters.map((char, i) => {
-        const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
-                             || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
-                                        ? { objectFit: 'fill' } 
-                                        : null;
-                                        
+    const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
+                        || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
+                                ? { objectFit: 'fill' } 
+                                : null;
+                        
         return (
             <li className="char__item" 
                 tabIndex={0} 
@@ -98,15 +98,15 @@ function View ({ characters,
 
     return (
         <Fragment>
-            <ul className="char__grid">
-                { elements }
-            </ul>
-            <button className="button button__main button__long"
-                    disabled={ newItemLoading }
-                    onClick={ () => onRequest(offset) }
-                    style={ { 'display': charEnded ? 'none' : 'block' } }>
-                <div className="inner">load more</div>
-            </button>
+        <ul className="char__grid">
+            { elements }
+        </ul>
+        <button className="button button__main button__long"
+                disabled={ newItemLoading }
+                onClick={ () => onRequest(offset, false) }
+                style={ { 'display': charEnded ? 'none' : 'block' } }>
+            <div className="inner">load more</div>
+        </button>
         </Fragment>
     )
 }

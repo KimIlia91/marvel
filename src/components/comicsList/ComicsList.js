@@ -9,7 +9,7 @@ const ComicsList = () => {
     const [ comics, setComics ] = useState([]);
     const [ offset, setOffset ] = useState(210);
     const [ newItemLoading, setNewItemLoading ] = useState(false);
-    const [ charEnded, setCharEnded ] = useState(false);
+    const [ comicsEnded, setComicsEnded ] = useState(false);
 
     const { loading, error, getAllComicsAsync } = useMarvelService();
 
@@ -25,6 +25,7 @@ const ComicsList = () => {
 
     const onComicsLoaded = (newComics) => {
         let ended = false;
+        
         if (newComics.length < 8) {
             ended = true;
         }
@@ -32,9 +33,31 @@ const ComicsList = () => {
         setComics(comics => [...comics, ...newComics]);
         setNewItemLoading(newItemLoading => false);
         setOffset(offset => offset + 8);
-        setCharEnded(charEnded => ended);
+        setComicsEnded(comicsEnded => ended);
     }
+
+    function renderElements(comics) {
+        const elements = comics.map((item, i) => {
+            const price = item.price === 0 ? 'NOT AVAILABLE' : `${ item.price }$`;
     
+            return (
+                <li key={ i } className="comics__item">
+                    <img tabIndex={0} 
+                        src={ item.thumbnail } alt={ item.title } 
+                        className="comics__item-img"/>
+                    <div className="comics__item-name">{ item.title }</div>
+                    <div className="comics__item-price">{ price }</div>
+                </li>
+            )
+        });
+    
+        return (
+            <ul className="comics__grid">
+                { elements }  
+            </ul>
+        )
+    }
+   
     const elements = renderElements(comics);
 
     const errorMessage = error ? <ErrorMessage/> : null;
@@ -45,31 +68,11 @@ const ComicsList = () => {
             { errorMessage } { spinner } { elements }
             <button disabled={ newItemLoading }
                     onClick={ () => onRequest(offset) }
-                    style={ { 'display': charEnded ? 'none' : 'block' } }
+                    style={ { 'display': comicsEnded ? 'none' : 'block' } }
                     className="button button__main button__long">
                 <div className="inner">load more</div>
             </button>
         </div>
-    )
-}
-
-const renderElements = (comics) => {
-    const elements = comics.map((item, i) => {
-        const price = item.price === 0 ? 'NOT AVAILABLE' : `${ item.price }$`;
-
-        return (
-            <li key={ i } className="comics__item">
-                <img tabIndex={0} src={ item.thumbnail } alt={ item.title } className="comics__item-img"/>
-                <div className="comics__item-name">{ item.title }</div>
-                <div className="comics__item-price">{ price }</div>
-            </li>
-        )
-    });
-
-    return (
-        <ul className="comics__grid">
-            { elements }  
-        </ul>
     )
 }
 
