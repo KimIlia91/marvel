@@ -41,10 +41,11 @@ const ComicsList = () => {
         const elements = comics.map((item, i) => {    
             return (
                 <li key={ item.id } className="comics__item">
-                    <Link to={ `/comics/${item.id}` }>
+                    <Link to={ `/comics/${item.id}` } tabIndex={-1}>
                         <img tabIndex={0} 
-                            src={ item.thumbnail } alt={ item.title } 
-                            className="comics__item-img"/>
+                             src={ item.thumbnail } 
+                             alt={ item.title } 
+                             className="comics__item-img"/>
                         <div className="comics__item-name">{ item.title }</div>
                         <div className="comics__item-price">{ item.price }</div>
                     </Link>

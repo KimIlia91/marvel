@@ -1,10 +1,9 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useMarvelService from '../../services/MarvelService';
-import AppBaner from '../appBanner/AppBanner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
-import './singleComicPage.scss';
+import './singleComic.scss';
 
 const SingleComicPage = () => {
     const { comicId } = useParams();
@@ -31,7 +30,6 @@ const SingleComicPage = () => {
 
     return (
         <>
-            <AppBaner/>
             { errorMessage } { spinner } { content }
         </>
     )
@@ -47,7 +45,7 @@ const SingleComicPage = () => {
                     <p className="single-comic__descr">Language: { comic.language }</p>
                     <div className="single-comic__price">{ comic.price }</div>
                 </div>
-                <Link to="/" className="single-comic__back">Back to all</Link>
+                <Link to="/comics" className="single-comic__back">Back to all</Link>
             </div>
         )
     }
