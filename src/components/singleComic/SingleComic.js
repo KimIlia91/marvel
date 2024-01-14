@@ -7,7 +7,7 @@ import './singleComic.scss';
 
 const SingleComicPage = () => {
     const { comicId } = useParams();
-    const [ comic, setComic ] = useState({});
+    const [ comic, setComic ] = useState(null);
     const { loading, error, getComicByIdAsync, clearError } = useMarvelService();
 
     useEffect(() => {
@@ -41,7 +41,7 @@ const SingleComicPage = () => {
                 <div className="single-comic__info">
                     <h2 className="single-comic__name">{ comic.title }</h2>
                     <p className="single-comic__descr">{ comic.description }</p>
-                    <p className="single-comic__descr">Pages: { comic.pages }</p>
+                    <p className="single-comic__descr">{ comic.pages }</p>
                     <p className="single-comic__descr">Language: { comic.language }</p>
                     <div className="single-comic__price">{ comic.price }</div>
                 </div>
