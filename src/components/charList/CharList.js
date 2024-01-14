@@ -1,5 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/Spinner';
@@ -49,13 +48,13 @@ const CharList = (props) => {
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading && !newItemLoading ? <Spinner/> : null;
     const content = <View characters={ characters } 
-                            onCharSelected={ onCharSelected }
-                            offset={ offset }
-                            newItemLoading={ newItemLoading }
-                            onRequest={ onRequest }
-                            charEnded={ charEnded }
-                            focusOnSelectedChar={ focusOnSelectedChar }
-                            charRefs={ charRefs }/>;
+                          onCharSelected={ onCharSelected }
+                          offset={ offset }
+                          newItemLoading={ newItemLoading }
+                          onRequest={ onRequest }
+                          charEnded={ charEnded }
+                          focusOnSelectedChar={ focusOnSelectedChar }
+                          charRefs={ charRefs }/>;
 
     return (
         <div className="char__list">
@@ -98,17 +97,17 @@ function View ({ characters,
     });
 
     return (
-        <Fragment>
-        <ul className="char__grid">
-            { elements }
-        </ul>
-        <button className="button button__main button__long"
-                disabled={ newItemLoading }
-                onClick={ () => onRequest(offset, false) }
-                style={ { 'display': charEnded ? 'none' : 'block' } }>
-            <div className="inner">load more</div>
-        </button>
-        </Fragment>
+        <>
+            <ul className="char__grid">
+                { elements }
+            </ul>
+            <button className="button button__main button__long"
+                    disabled={ newItemLoading }
+                    onClick={ () => onRequest(offset, false) }
+                    style={ { 'display': charEnded ? 'none' : 'block' } }>
+                <div className="inner">load more</div>
+            </button>
+        </>
     )
 }
 
