@@ -18,6 +18,7 @@ const CharList = (props) => {
     }, []);
 
     const onRequest = (offset, initial) => {
+        console.log('onRequest');
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
         getAllCharactersAsync(offset)
             .then(onCharLoaded);
@@ -35,7 +36,7 @@ const CharList = (props) => {
         setOffset(offset => offset + 9);
         setCharEnded(charEnded => ended);
     }
-
+    
     const charRefs = useRef([]);
 
     const focusOnSelectedChar = (id) => {
