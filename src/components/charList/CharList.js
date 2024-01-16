@@ -18,13 +18,13 @@ const CharList = (props) => {
     }, []);
 
     const onRequest = (offset, initial) => {
-        console.log('onRequest');
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
         getAllCharactersAsync(offset)
             .then(onCharLoaded);
     }
 
     const onCharLoaded = (newCharacters) => {
+
         let ended = false;
 
         if (newCharacters.length < 9) {
@@ -48,6 +48,7 @@ const CharList = (props) => {
     const { onCharSelected } = props;
     const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading && !newItemLoading ? <Spinner/> : null;
+
     const content = <View characters={ characters } 
                           onCharSelected={ onCharSelected }
                           offset={ offset }
