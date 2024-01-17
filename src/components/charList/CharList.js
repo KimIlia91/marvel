@@ -75,10 +75,10 @@ function View ({ characters,
     charRefs }) {
 
     const elements = characters.map((char, i) => {
-    const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
-                        || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
-                                ? { objectFit: 'fill' } 
-                                : null;
+        const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
+                            || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
+                                    ? { objectFit: 'fill' } 
+                                    : null;
                         
         return (
             <li className="char__item" 
