@@ -16,7 +16,7 @@ const useMarvelService = () => {
 
     const getCharacterByIdAsync = async (id, randomId = _randomId) => {
         const res = await request(`${_apiBase}/characters/${id}?${_apiKey}`);
-        console.log(res);
+
         if (res.code === 404 && randomId) {
             return res;
         }

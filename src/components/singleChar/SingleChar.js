@@ -16,13 +16,11 @@ const SingleChar = () => {
 
     const updateComic = () => {
         clearError();
-        console.log(charId);
         getCharacterByIdAsync(charId)
             .then(onCharLoaded);
     }
 
     const onCharLoaded = (char) => {
-        console.log(char);
         setChar(char);
     }
 
