@@ -27,7 +27,7 @@ const useMarvelService = () => {
     const getCharactersByName = async (name) => {
         const res = await request(`${_apiBase}/characters?name=${name}&${_apiKey}`);
         
-        if (res.data.results.length === 0) {
+        if (res.data.results.length === 0 && res.code === 200) {
             return null;
         }
 
