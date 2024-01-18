@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Formik, ErrorMessage, Form, useField } from 'formik';
+import { Formik, ErrorMessage as FormikErrorMessage , Form, useField } from 'formik';
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
-import useMarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/marvelService';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './searchBar.scss';
 
-const SearchBarInput = ({ label, onChangeChar, firstRequest, ...props }) => {
+const SearchBarInput = ({ label, onChangeChar, loading, firstRequest, ...props }) => {
     
     const [ field ] = useField(props);
 
@@ -22,12 +23,12 @@ const SearchBarInput = ({ label, onChangeChar, firstRequest, ...props }) => {
                         field.onChange(e);
                         onChangeChar(null);
                     }}/>
-                <button className="button button__main" type='submit'>
+                <button className="button button__main" type='submit' disabled={loading}>
                     <div className="inner">FIND</div>
                 </button>
             </div>
             <div className='search-bar__wrapper'>
-                {<ErrorMessage className='search-bar__message search-bar__message_error' name={ props.name } component='div'/>}
+                {<FormikErrorMessage className='search-bar__message search-bar__message_error' name={ props.name } component='div'/>}
                 { 
                     props.char
                         ? <div className='search-bar__message search-bar__message_find'>There is! Visit { props.char.name } page?</div> 
@@ -51,7 +52,7 @@ const SearchBar = () => {
     const [ char, setChar ] = useState(null);
     const [ firstRequest, setFirstRequest ] = useState(false);
 
-    const { getCharactersByName } = useMarvelService();
+    const { loading, error, getCharactersByName } = useMarvelService();
 
     const onRequest = (name) => {
         getCharactersByName(name)
@@ -68,16 +69,18 @@ const SearchBar = () => {
         setFirstRequest(false);
     }
 
+    const errorMessage = error ? <div className="char__search-critical-error"><ErrorMessage /></div> : null;
+
     return (
         <Formik
-            initialValues={{
-                searchTerms: ''
-            }}
-            validationSchema={ Yup.object({
-                searchTerms: Yup.string()
-                    .required('This field is required')
-            }) }
-            onSubmit={ values =>{ onRequest(values.searchTerms) }}
+        initialValues={{
+            searchTerms: ''
+        }}
+        validationSchema={ Yup.object({
+            searchTerms: Yup.string()
+                .required('This field is required')
+        }) }
+        onSubmit={ values =>{ onRequest(values.searchTerms) }}
         >
             <Form className='search-bar'>
                 <SearchBarInput
@@ -89,9 +92,11 @@ const SearchBar = () => {
                     char={ char } 
                     firstRequest={ firstRequest }
                     onChangeChar={ onChangeChar }
+                    loading={ loading }
                 />
+                {errorMessage}
             </Form>
-        </Formik>
+        </Formik>        
     )
 }
 
