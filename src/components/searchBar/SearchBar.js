@@ -69,8 +69,6 @@ const SearchBar = () => {
         setFirstRequest(false);
     }
 
-    const errorMessage = error ? <div className="search-bar__message"><ErrorMessage /></div> : null;
-
     return (
         <Formik
         initialValues={{
@@ -82,20 +80,27 @@ const SearchBar = () => {
         }) }
         onSubmit={ values =>{ onRequest(values.searchTerms) }}
         >
-            <Form className='search-bar'>
-                <SearchBarInput
-                    label='Or find a character by name:'
-                    placeholder='Enter name'
-                    id='searchTerms' 
-                    name='searchTerms' 
-                    type='text'
-                    char={ char } 
-                    firstRequest={ firstRequest }
-                    onChangeChar={ onChangeChar }
-                    loading={ loading }
-                />
-                {errorMessage}
-            </Form>
+            {
+                error 
+                    ? <div className="search-bar"><ErrorMessage /></div>
+                    : <Form className='search-bar'>
+                        {
+                            error 
+                                ? <div className="search-bar"><ErrorMessage /></div>
+                                : <SearchBarInput
+                                    label='Or find a character by name:'
+                                    placeholder='Enter name'
+                                    id='searchTerms' 
+                                    name='searchTerms' 
+                                    type='text'
+                                    char={ char } 
+                                    firstRequest={ firstRequest }
+                                    onChangeChar={ onChangeChar }
+                                    loading={ loading }
+                                />
+                        }
+                       </Form>
+            }
         </Formik>        
     )
 }
