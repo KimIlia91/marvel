@@ -16,12 +16,22 @@ const useMarvelService = () => {
 
     const getCharacterByIdAsync = async (id, randomId = _randomId) => {
         const res = await request(`${_apiBase}/characters/${id}?${_apiKey}`);
-
+        console.log(res);
         if (res.code === 404 && randomId) {
             return res;
         }
 
        return _transformCharacter(res.data.results[0]);
+    }
+
+    const getCharactersByName = async (name) => {
+        const res = await request(`${_apiBase}/characters?name=${name}&${_apiKey}`);
+        
+        if (res.data.results.length === 0) {
+            return null;
+        }
+
+        return _transformCharacter(res.data.results[0]);
     }
 
     const getAllComicsAsync = async (offset = _baseOffset) => {
@@ -38,7 +48,7 @@ const useMarvelService = () => {
         return {
             id: res.id,
             name: res.name,
-            description: res.description,
+            description: res.description || "There is no description",
             thumbnail: `${res.thumbnail.path}.${res.thumbnail.extension}`,
             homepage: res.urls[0].url,
             wiki: res.urls[1].url,
@@ -62,7 +72,16 @@ const useMarvelService = () => {
         }
     }
 
-    return { loading, error, getAllCharactersAsync, getCharacterByIdAsync, clearError, getAllComicsAsync, getComicByIdAsync }
+    return { 
+        loading, 
+        error, 
+        getAllCharactersAsync, 
+        getCharacterByIdAsync, 
+        clearError, 
+        getAllComicsAsync, 
+        getComicByIdAsync,
+        getCharactersByName 
+    }
 }
 
 export default useMarvelService;
