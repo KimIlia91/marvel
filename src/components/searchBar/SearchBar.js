@@ -69,7 +69,7 @@ const SearchBar = () => {
         setFirstRequest(false);
     }
 
-    const errorMessage = error ? <div className="char__search-critical-error"><ErrorMessage /></div> : null;
+    const errorMessage = error ? <div className="search-bar__message"><ErrorMessage /></div> : null;
 
     return (
         <Formik
