@@ -11,9 +11,11 @@ const CharInfo = (props) => {
     const [ char, setChar ] = useState(null);
     const { loading, error, getCharacterByIdAsync, clearError } = useMarvelService();
 
+    /* eslint-disable */
     useEffect(() => {
         updateChar();
     }, [props.charId])
+    /* eslint-disable */
 
     const updateChar = () => {
         const { charId } = props;
