@@ -106,11 +106,9 @@ function View ({ characters, onCharSelected, focusOnSelectedChar, charRefs }) {
     });
 
     return (
-        <>
-            <ul className="char__grid">
-                { elements }
-            </ul>
-        </>
+        <ul className="char__grid">
+            { elements }
+        </ul>
     )
 }
 
