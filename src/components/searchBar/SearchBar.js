@@ -1,24 +1,20 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Formik, ErrorMessage as FormikErrorMessage , Form, useField } from 'formik';
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import useMarvelService from '../../services/marvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-
-import './searchBar.scss';
 import ProcessStatus from '../../enums/ProcessStatus';
 
-const setContant = (process, Component, onChangeChar, firstRequest, char) => {
+import './searchBar.scss';
+
+const setContant = (process, Component) => {
     switch(process) {
         case ProcessStatus.CONFIRMED:
         case ProcessStatus.LOADING:
         case ProcessStatus.WAITING:
-            return <Component
-                    onChangeChar={onChangeChar}
-                    process={process}
-                    firstRequest={firstRequest}
-                    char={char}/>
+            return <Component />
         case ProcessStatus.ERROR: 
             return <ErrorMessage />
         default:
@@ -100,6 +96,16 @@ const SearchBar = () => {
         setFirstRequest(false);
     }
 
+    const element = useMemo(() => {
+        return setContant(process, () =>  
+            <SearchBarInput
+                onChangeChar={onChangeChar}
+                process={process}
+                firstRequest={firstRequest}
+                char={char}
+            />)
+    }, [process])
+
     return (
         <Formik
             initialValues={{
@@ -112,7 +118,7 @@ const SearchBar = () => {
             onSubmit={ values =>{ onRequest(values.searchTerms) }}
         >
             <Form className='search-bar'>
-                { setContant(process, SearchBarInput, onChangeChar, firstRequest, char) }
+                { element }
             </Form>
         </Formik>        
     )

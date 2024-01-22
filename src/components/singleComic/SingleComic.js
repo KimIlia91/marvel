@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import useMarvelService from '../../services/marvelService';
-import setContant from '../../utils/setContant';
+import setItemContant from '../../utils/setItemContant';
 import ProcessStatus from '../../enums/ProcessStatus';
 
 import './singleComic.scss';
@@ -31,7 +31,7 @@ const SingleComicPage = () => {
 
     return (
         <>
-            { setContant(process, View, comic) }
+            { setItemContant(process, View, comic) }
         </>
     )
 }

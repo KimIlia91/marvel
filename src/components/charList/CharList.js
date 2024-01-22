@@ -2,26 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/marvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
+import setListContant from '../../utils/setListContant';
 import ProcessStatus from '../../enums/ProcessStatus';
 
 import './charList.scss';
-
-const setContant = (process, Component, newItemLoading) => {
-    switch(process) {
-        case ProcessStatus.WAITING:
-            return <Spinner />
-        case ProcessStatus.LOADING:
-            return newItemLoading ? <Component /> : <Spinner />
-        case ProcessStatus.CONFIRMED:
-            return <Component />
-        case ProcessStatus.ERROR: 
-            return <ErrorMessage />
-        default:
-            throw new Error('No indication of process status!');
-    }
-}
 
 const CharList = (props) => {
     const [ characters, setCharacters ] = useState([]);
@@ -68,8 +52,8 @@ const CharList = (props) => {
 
     const { onCharSelected } = props;
 
-    const elements = useMemo(() => {
-        return setContant(process, () => 
+    const elementsMemo = useMemo(() => {
+        return setListContant(process, () => 
             <View 
                 characters={ characters } 
                 onCharSelected={ onCharSelected } 
@@ -81,7 +65,7 @@ const CharList = (props) => {
 
     return (
         <div className="char__list">
-            { elements }
+            { elementsMemo }
             <button 
                 className="button button__main button__long"
                 disabled={ newItemLoading }

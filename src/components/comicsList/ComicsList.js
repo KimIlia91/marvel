@@ -2,29 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import useMarvelService from '../../services/marvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
 import ProcessStatus from '../../enums/ProcessStatus';
+import setListContant from '../../utils/setListContant';
 
 import './comicsList.scss';
-
-const setContant = (
-    process, 
-    Component, 
-    newItemLoading) => {
-    switch(process) {
-        case ProcessStatus.WAITING:
-            return <Spinner />
-        case ProcessStatus.LOADING:
-            return newItemLoading ? <Component /> : <Spinner />
-        case ProcessStatus.CONFIRMED:
-            return <Component />
-        case ProcessStatus.ERROR: 
-            return <ErrorMessage />
-        default:
-            throw new Error('No indication of process status!');
-    }
-}
 
 const ComicsList = () => {
     
@@ -63,7 +44,7 @@ const ComicsList = () => {
 
     return (
         <div className="comics__list">
-            { setContant(process, () => renderElements(comics), newItemLoading) }
+            { setListContant(process, () => renderElements(comics), newItemLoading) }
             <button disabled={ newItemLoading }
                     onClick={ () => onRequest(offset) }
                     style={ { 'display': comicsEnded ? 'none' : 'block' } }

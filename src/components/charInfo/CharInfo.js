@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/marvelService';
-import setContant from '../../utils/setContant';
+import setContant from '../../utils/setItemContant';
 import ProcessStatus from '../../enums/ProcessStatus';
 
 import './charInfo.scss';

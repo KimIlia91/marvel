@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import useMarvelService from '../../services/marvelService';
 import mjolnir from '../../resources/img/mjolnir.png';
-import setContant from '../../utils/setContant';
+import setItemContant from '../../utils/setItemContant';
 import ProcessStatus from '../../enums/ProcessStatus';
 
 import './randomChar.scss';
@@ -38,7 +38,7 @@ const RandomChar = () => {
 
     return (
         <div className="randomchar">
-            { setContant(process, View, char ) }
+            { setItemContant(process, View, char ) }
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br/>

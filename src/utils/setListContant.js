@@ -1,16 +1,15 @@
-import Skeleton from "../components/skeleton/Skeleton";
 import Spinner from "../components/spinner/Spinner";
 import ErrorMessage from "../components/errorMessage/ErrorMessage";
 import ProcessStatus from "../enums/ProcessStatus";
 
-const setContant = (process, Component, data) => {
+const setListContant = (process, Component, newItemLoading) => {
     switch(process) {
         case ProcessStatus.WAITING:
-            return <Skeleton />
-        case ProcessStatus.LOADING:
             return <Spinner />
+        case ProcessStatus.LOADING:
+            return newItemLoading ? <Component /> : <Spinner />
         case ProcessStatus.CONFIRMED:
-            return <Component data={ data }/>
+            return <Component />
         case ProcessStatus.ERROR: 
             return <ErrorMessage />
         default:
@@ -18,4 +17,4 @@ const setContant = (process, Component, data) => {
     }
 }
 
-export default setContant;
+export default setListContant;

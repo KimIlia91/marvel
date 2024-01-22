@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import useMarvelService from '../../services/marvelService';
 import ProcessStatus from '../../enums/ProcessStatus';
-import setContant from '../../utils/setContant';
+import setItemContant from '../../utils/setItemContant';
 
 import './singleChar.scss';
 
@@ -31,7 +31,7 @@ const SingleChar = () => {
 
     return (
         <>
-            { setContant(process, View, char) }
+            { setItemContant(process, View, char) }
         </>
     )
 }
