@@ -1,13 +1,13 @@
 import { useState, useCallback } from "react";
+import ProcessStatus from "../enums/ProcessStatus";
 
 export const useHttp = () => {
-    const [ loading, setLoading ] = useState(false);
-    const [ error, setError ] = useState(null);
+    const [ process, setProcess ] = useState(ProcessStatus.WAITING);
 
     const request = useCallback(
         async (url, method = 'GET', body = null, headers = { 'Content-Type': 'application/json' }) => {
-        
-        setLoading(true);
+
+        setProcess(ProcessStatus.LOADING);
 
         try {
             const response = await fetch(url, { method, body, headers });
@@ -18,17 +18,16 @@ export const useHttp = () => {
             
             const data = await response.json();
 
-            setLoading(false);
             return data;
-
         } catch(e) {
-            setLoading(false);
-            setError(e.message);
+            setProcess(ProcessStatus.ERROR);
             throw e;
         }
     }, []);
 
-    const clearError = useCallback(() => setError(null), []);
+    const clearError = useCallback(() => {
+        setProcess(ProcessStatus.LOADING)
+    }, []);
 
-    return { loading, request, error, clearError }
+    return { request, clearError, process, setProcess }
 }

@@ -1,51 +1,52 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+
 import useMarvelService from '../../services/marvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
+import ProcessStatus from '../../enums/ProcessStatus';
+import setContant from '../../utils/setContant';
+
 import './singleChar.scss';
 
 const SingleChar = () => {
     const { charId } = useParams();
     const [ char, setChar ] = useState(null);
-    const { loading, error, getCharacterByIdAsync, clearError } = useMarvelService();
+    const { getCharacterByIdAsync, clearError, process, setProcess } = useMarvelService();
 
+    /* eslint-disable*/
     useEffect(() => {
         updateComic();
     }, [charId])
+    /* eslint-disable*/
 
     const updateComic = () => {
         clearError();
         getCharacterByIdAsync(charId)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(() => setProcess(ProcessStatus.CONFIRMED));
     }
 
     const onCharLoaded = (char) => {
         setChar(char);
     }
 
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <View char={ char }/> : null;
-
     return (
         <>
-            { errorMessage } { spinner } { content }
+            { setContant(process, View, char) }
         </>
     )
+}
 
-    function View({ char }) {
-        return (
-            <div className="single-char">
-                <img src={ char.thumbnail } alt={ char.name } className="single-char__img"/>
-                <div className="single-char__info">
-                    <h2 className="single-char__name">{ char.name }</h2>
-                    <p className="single-char__descr">{ char.description }</p>
-                </div>
-                <Link to="/" className="single-char__back">Back to all</Link>
+function View({ data }) {
+    return (
+        <div className="single-char">
+            <img src={ data.thumbnail } alt={ data.name } className="single-char__img"/>
+            <div className="single-char__info">
+                <h2 className="single-char__name">{ data.name }</h2>
+                <p className="single-char__descr">{ data.description }</p>
             </div>
-        )
-    }
+            <Link to="/" className="single-char__back">Back to all</Link>
+        </div>
+    )
 }
 
 export default SingleChar;

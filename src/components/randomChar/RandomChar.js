@@ -1,24 +1,29 @@
 import { useEffect, useState } from 'react';
-import Spinner from '../spinner/Spinner';
+
 import useMarvelService from '../../services/marvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
 import mjolnir from '../../resources/img/mjolnir.png';
+import setContant from '../../utils/setContant';
+import ProcessStatus from '../../enums/ProcessStatus';
+
 import './randomChar.scss';
 
 const RandomChar = () => {
     const [ char, setChar ] = useState({});
 
-    const { loading, error, getCharacterByIdAsync, clearError } = useMarvelService();
+    const { getCharacterByIdAsync, clearError, process, setProcess } = useMarvelService();
 
+    /* eslint-disable*/
     useEffect(() => {
         updateChar();
     }, [])
+    /* eslint-disable*/
 
     const updateChar = () => {
         const id = Math.floor(Math.random() * (1010789 - 1009146) + 1009146);
         clearError();
         getCharacterByIdAsync(id, true)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(() => setProcess(ProcessStatus.CONFIRMED));
     }
     
     const onCharLoaded = (char) => {
@@ -31,13 +36,9 @@ const RandomChar = () => {
         setChar(char);
     }
 
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <View char={ char }/> : null;
-    
     return (
         <div className="randomchar">
-            { errorMessage } { spinner } { content }
+            { setContant(process, View, char ) }
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br/>
@@ -55,12 +56,12 @@ const RandomChar = () => {
     )
 }
 
-const View = ({ char }) => {
-    if (!char || Object.keys(char).length === 0) {
-        return null;
+const View = ({ data }) => {
+    if (!data || Object.keys(data).length === 0) {
+        return <div className="randomchar__block"></div>;
     }
 
-    const { thumbnail, name, description, homepage, wiki } = char;
+    const { thumbnail, name, description, homepage, wiki } = data;
     const imgContainStyle = thumbnail.split('/')[10] === 'image_not_available.jpg' 
                             || '4c002e0305708.gif' === thumbnail.split('/')[10]
                                         ? { objectFit: 'fill' } 

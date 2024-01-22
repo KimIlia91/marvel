@@ -2,43 +2,73 @@ import { useState } from 'react';
 import { Formik, ErrorMessage as FormikErrorMessage , Form, useField } from 'formik';
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
+
 import useMarvelService from '../../services/marvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
 import './searchBar.scss';
+import ProcessStatus from '../../enums/ProcessStatus';
 
-const SearchBarInput = ({ label, onChangeChar, loading, firstRequest, ...props }) => {
+const setContant = (process, Component, onChangeChar, firstRequest, char) => {
+    switch(process) {
+        case ProcessStatus.CONFIRMED:
+        case ProcessStatus.LOADING:
+        case ProcessStatus.WAITING:
+            return <Component
+                    onChangeChar={onChangeChar}
+                    process={process}
+                    firstRequest={firstRequest}
+                    char={char}/>
+        case ProcessStatus.ERROR: 
+            return <ErrorMessage />
+        default:
+            throw new Error('No indication of process status!');
+    }
+}
+
+const SearchBarInput = ({ onChangeChar, process, firstRequest, char }) => {
     
-    const [ field ] = useField(props);
+    const [ field ] = useField({ name: 'searchTerms'  });
 
     return (
         <>
-            <label htmlFor={ props.name }>{ label }</label>
+            <label htmlFor='searchTerms'>Or find a character by name:</label>
             <div className='search-bar__wrapper'>
                 <input 
-                    { ...props } 
                     { ...field } 
-                    placeholder={ props.placeholder } 
+                    id='searchTerms' 
+                    type='text'
+                    placeholder='Enter name' 
                     onChange={(e) => {
                         field.onChange(e);
                         onChangeChar(null);
                     }}/>
-                <button className="button button__main" type='submit' disabled={loading}>
+                <button 
+                    className="button button__main" 
+                    type='submit' 
+                    disabled={ !(process === ProcessStatus.CONFIRMED || process === ProcessStatus.WAITING) }
+                >
                     <div className="inner">FIND</div>
                 </button>
             </div>
             <div className='search-bar__wrapper'>
-                {<FormikErrorMessage className='search-bar__message search-bar__message_error' name={ props.name } component='div'/>}
+                {
+                    <FormikErrorMessage 
+                        className='search-bar__message search-bar__message_error' 
+                        name='searchTerms' 
+                        component='div'
+                    />
+                }
                 { 
-                    props.char
-                        ? <div className='search-bar__message search-bar__message_find'>There is! Visit { props.char.name } page?</div> 
+                    char
+                        ? <div className='search-bar__message search-bar__message_find'>There is! Visit { char.name } page?</div> 
                         : firstRequest 
                             ? <div className='search-bar__message search-bar__message_not-find'>The character was not found. Check the name and try again</div> 
                             : null
                 }
                 {
-                    props.char 
-                        ? <Link to={ `/char/${props.char.id}` } className="button button__secondary">
+                    char 
+                        ? <Link to={ `/char/${char.id}` } className="button button__secondary">
                             <div className="inner">to page</div>
                           </Link>
                         : null
@@ -52,11 +82,12 @@ const SearchBar = () => {
     const [ char, setChar ] = useState(null);
     const [ firstRequest, setFirstRequest ] = useState(false);
 
-    const { loading, error, getCharactersByName } = useMarvelService();
+    const { getCharactersByName, process, setProcess } = useMarvelService();
 
     const onRequest = (name) => {
         getCharactersByName(name)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(() => setProcess(ProcessStatus.CONFIRMED));
     }
 
     const onCharLoaded = (char) => {
@@ -71,36 +102,18 @@ const SearchBar = () => {
 
     return (
         <Formik
-        initialValues={{
-            searchTerms: ''
-        }}
-        validationSchema={ Yup.object({
-            searchTerms: Yup.string()
-                .required('This field is required')
-        }) }
-        onSubmit={ values =>{ onRequest(values.searchTerms) }}
+            initialValues={{
+                searchTerms: ''
+            }}
+            validationSchema={ Yup.object({
+                searchTerms: Yup.string()
+                    .required('This field is required')
+            }) }
+            onSubmit={ values =>{ onRequest(values.searchTerms) }}
         >
-            {
-                error 
-                    ? <div className="search-bar"><ErrorMessage /></div>
-                    : <Form className='search-bar'>
-                        {
-                            error 
-                                ? <div className="search-bar"><ErrorMessage /></div>
-                                : <SearchBarInput
-                                    label='Or find a character by name:'
-                                    placeholder='Enter name'
-                                    id='searchTerms' 
-                                    name='searchTerms' 
-                                    type='text'
-                                    char={ char } 
-                                    firstRequest={ firstRequest }
-                                    onChangeChar={ onChangeChar }
-                                    loading={ loading }
-                                />
-                        }
-                       </Form>
-            }
+            <Form className='search-bar'>
+                { setContant(process, SearchBarInput, onChangeChar, firstRequest, char) }
+            </Form>
         </Formik>        
     )
 }

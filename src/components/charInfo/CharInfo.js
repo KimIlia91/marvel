@@ -1,15 +1,16 @@
 import { Fragment, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+
 import useMarvelService from '../../services/marvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Skeleton from '../skeleton/Skeleton';
+import setContant from '../../utils/setContant';
+import ProcessStatus from '../../enums/ProcessStatus';
+
 import './charInfo.scss';
 
 const CharInfo = (props) => {
 
     const [ char, setChar ] = useState(null);
-    const { loading, error, getCharacterByIdAsync, clearError } = useMarvelService();
+    const { process, setProcess, getCharacterByIdAsync, clearError } = useMarvelService();
 
     /* eslint-disable */
     useEffect(() => {
@@ -25,29 +26,25 @@ const CharInfo = (props) => {
 
         clearError();
         getCharacterByIdAsync(charId)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(() => setProcess(ProcessStatus.CONFIRMED));
     }
 
     const onCharLoaded = (char) => {
         setChar(char);
     }
 
-    const skeleton = char || loading || error ? null : <Skeleton/>; 
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !char) ? <View char={ char }/> : null;
-
     return (
         <div className="char__info">
-            { skeleton } { errorMessage } { spinner } { content }
+            { setContant(process, View, char) }
         </div>
     )
 }
 
-const View = ({ char }) => {
-    const { thumbnail, name, homepage, wiki, description, comics } = char;
-    const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
-                         || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
+const View = ({ data }) => {
+    const { thumbnail, name, homepage, wiki, description, comics } = data;
+    const imgContainStyle = thumbnail.split('/')[10] === 'image_not_available.jpg' 
+                         || thumbnail.split('/')[10] === '4c002e0305708.gif'
                                         ? { objectFit: 'fill' } 
                                         : null;
 
@@ -95,3 +92,9 @@ CharInfo.propTypes = {
 }
 
 export default CharInfo;
+
+
+    // const skeleton = char || loading || error ? null : <Skeleton/>; 
+    // const errorMessage = error ? <ErrorMessage/> : null;
+    // const spinner = loading ? <Spinner/> : null;
+    // const content = !(loading || error || !char) ? <View char={ char }/> : null;

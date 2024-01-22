@@ -1,54 +1,55 @@
 import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+
 import useMarvelService from '../../services/marvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
+import setContant from '../../utils/setContant';
+import ProcessStatus from '../../enums/ProcessStatus';
+
 import './singleComic.scss';
 
 const SingleComicPage = () => {
     const { comicId } = useParams();
     const [ comic, setComic ] = useState(null);
-    const { loading, error, getComicByIdAsync, clearError } = useMarvelService();
+    const { getComicByIdAsync, clearError, process, setProcess } = useMarvelService();
 
+    /*eslint-disable*/
     useEffect(() => {
         updateComic();
     }, [comicId])
+    /*eslint-disable*/
 
     const updateComic = () => {
         clearError();
         getComicByIdAsync(comicId)
-            .then(onComicLoaded);
+            .then(onComicLoaded)
+            .then(() => setProcess(ProcessStatus.CONFIRMED));
     }
 
     const onComicLoaded = (comic) => {
         setComic(comic);
     }
 
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading ? <Spinner/> : null;
-    const content = !(loading || error || !comic) ? <View comic={ comic }/> : null;
-
     return (
         <>
-            { errorMessage } { spinner } { content }
+            { setContant(process, View, comic) }
         </>
     )
+}
 
-    function View({ comic }) {
-        return (
-            <div className="single-comic">
-                <img src={ comic.thumbnail } alt={ comic.title } className="single-comic__img"/>
-                <div className="single-comic__info">
-                    <h2 className="single-comic__name">{ comic.title }</h2>
-                    <p className="single-comic__descr">{ comic.description }</p>
-                    <p className="single-comic__descr">{ comic.pages }</p>
-                    <p className="single-comic__descr">Language: { comic.language }</p>
-                    <div className="single-comic__price">{ comic.price }</div>
-                </div>
-                <Link to="/comics" className="single-comic__back">Back to all</Link>
+function View({ data }) {
+    return (
+        <div className="single-comic">
+            <img src={ data.thumbnail } alt={ data.title } className="single-comic__img"/>
+            <div className="single-comic__info">
+                <h2 className="single-comic__name">{ data.title }</h2>
+                <p className="single-comic__descr">{ data.description }</p>
+                <p className="single-comic__descr">{ data.pages }</p>
+                <p className="single-comic__descr">Language: { data.language }</p>
+                <div className="single-comic__price">{ data.price }</div>
             </div>
-        )
-    }
+            <Link to="/comics" className="single-comic__back">Back to all</Link>
+        </div>
+    )
 }
 
 export default SingleComicPage;

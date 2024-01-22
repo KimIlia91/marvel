@@ -1,9 +1,44 @@
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import ErrorMessage from '../errorMessage/ErrorMessage';
-import Spinner from '../spinner/Spinner';
+
 import useMarvelService from '../../services/marvelService';
+import Spinner from '../spinner/Spinner';
+import ErrorMessage from '../errorMessage/ErrorMessage';
+import ProcessStatus from '../../enums/ProcessStatus';
+
 import './charList.scss';
+
+const setContant = (
+    process, 
+    Component, 
+    newItemLoading, 
+    characters, 
+    onCharSelected, 
+    focusOnSelectedChar, 
+    charRefs) => {
+    switch(process) {
+        case ProcessStatus.WAITING:
+            return <Spinner />
+        case ProcessStatus.LOADING:
+            return newItemLoading ? 
+                <Component 
+                    characters={ characters } 
+                    onCharSelected={onCharSelected} 
+                    focusOnSelectedChar={focusOnSelectedChar}
+                    charRefs={charRefs} /> 
+                    : <Spinner />
+        case ProcessStatus.CONFIRMED:
+            return <Component 
+                        characters={ characters } 
+                        onCharSelected={onCharSelected} 
+                        focusOnSelectedChar={focusOnSelectedChar}
+                        charRefs={charRefs} />
+        case ProcessStatus.ERROR: 
+            return <ErrorMessage />
+        default:
+            throw new Error('No indication of process status!');
+    }
+}
 
 const CharList = (props) => {
     const [ characters, setCharacters ] = useState([]);
@@ -11,16 +46,19 @@ const CharList = (props) => {
     const [ offset, setOffset ] = useState(210);
     const [ charEnded, setCharEnded ] = useState(false);
 
-    const { loading, error, getAllCharactersAsync } = useMarvelService();
+    const { getAllCharactersAsync, process, setProcess } = useMarvelService();
 
+    /*eslint-disable*/
     useEffect(() => {
         onRequest(offset, true);
     }, []);
+    /*eslint-disable*/
 
     const onRequest = (offset, initial) => {
         initial ? setNewItemLoading(false) : setNewItemLoading(true);
         getAllCharactersAsync(offset)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(() => setProcess(ProcessStatus.CONFIRMED));
     }
 
     const onCharLoaded = (newCharacters) => {
@@ -46,31 +84,34 @@ const CharList = (props) => {
     }
 
     const { onCharSelected } = props;
-    const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner = loading && !newItemLoading ? <Spinner/> : null;
-
-    const content = <View characters={ characters } 
-                          onCharSelected={ onCharSelected }
-                          offset={ offset }
-                          newItemLoading={ newItemLoading }
-                          onRequest={ onRequest }
-                          charEnded={ charEnded }
-                          focusOnSelectedChar={ focusOnSelectedChar }
-                          charRefs={ charRefs }/>;
 
     return (
         <div className="char__list">
-            { errorMessage } { spinner } { content }
+            { 
+                setContant(
+                    process, 
+                    View, 
+                    newItemLoading, 
+                    characters, 
+                    onCharSelected, 
+                    focusOnSelectedChar, 
+                    charRefs)
+            }
+            <button 
+                className="button button__main button__long"
+                disabled={ newItemLoading }
+                onClick={ () => onRequest(offset, false) }
+                style={ { 'display': charEnded ? 'none' : 'block' }}
+            >
+                <div className="inner">load more</div>
+            </button>
         </div>
     )
 }
 
-function View ({ characters, 
+function View ({ 
+    characters, 
     onCharSelected, 
-    offset, 
-    newItemLoading, 
-    onRequest, 
-    charEnded, 
     focusOnSelectedChar, 
     charRefs }) {
 
@@ -103,12 +144,6 @@ function View ({ characters,
             <ul className="char__grid">
                 { elements }
             </ul>
-            <button className="button button__main button__long"
-                    disabled={ newItemLoading }
-                    onClick={ () => onRequest(offset, false) }
-                    style={ { 'display': charEnded ? 'none' : 'block' } }>
-                <div className="inner">load more</div>
-            </button>
         </>
     )
 }
