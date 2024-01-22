@@ -4,26 +4,12 @@ import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import useMarvelService from '../../services/marvelService';
-import ErrorMessage from '../errorMessage/ErrorMessage';
+import setInputContant from '../../utils/setInputContant';
 import ProcessStatus from '../../enums/ProcessStatus';
 
 import './searchBar.scss';
 
-const setContant = (process, Component) => {
-    switch(process) {
-        case ProcessStatus.CONFIRMED:
-        case ProcessStatus.LOADING:
-        case ProcessStatus.WAITING:
-            return <Component />
-        case ProcessStatus.ERROR: 
-            return <ErrorMessage />
-        default:
-            throw new Error('No indication of process status!');
-    }
-}
-
 const SearchBarInput = ({ onChangeChar, process, firstRequest, char }) => {
-    
     const [ field ] = useField({ name: 'searchTerms'  });
 
     return (
@@ -97,7 +83,7 @@ const SearchBar = () => {
     }
 
     const element = useMemo(() => {
-        return setContant(process, () =>  
+        return setInputContant(process, () =>  
             <SearchBarInput
                 onChangeChar={onChangeChar}
                 process={process}
