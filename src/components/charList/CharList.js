@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import useMarvelService from '../../services/marvelService';
@@ -8,31 +8,14 @@ import ProcessStatus from '../../enums/ProcessStatus';
 
 import './charList.scss';
 
-const setContant = (
-    process, 
-    Component, 
-    newItemLoading, 
-    characters, 
-    onCharSelected, 
-    focusOnSelectedChar, 
-    charRefs) => {
+const setContant = (process, Component, newItemLoading) => {
     switch(process) {
         case ProcessStatus.WAITING:
             return <Spinner />
         case ProcessStatus.LOADING:
-            return newItemLoading ? 
-                <Component 
-                    characters={ characters } 
-                    onCharSelected={onCharSelected} 
-                    focusOnSelectedChar={focusOnSelectedChar}
-                    charRefs={charRefs} /> 
-                    : <Spinner />
+            return newItemLoading ? <Component /> : <Spinner />
         case ProcessStatus.CONFIRMED:
-            return <Component 
-                        characters={ characters } 
-                        onCharSelected={onCharSelected} 
-                        focusOnSelectedChar={focusOnSelectedChar}
-                        charRefs={charRefs} />
+            return <Component />
         case ProcessStatus.ERROR: 
             return <ErrorMessage />
         default:
@@ -85,18 +68,20 @@ const CharList = (props) => {
 
     const { onCharSelected } = props;
 
+    const elements = useMemo(() => {
+        return setContant(process, () => 
+            <View 
+                characters={ characters } 
+                onCharSelected={ onCharSelected } 
+                focusOnSelectedChar={ focusOnSelectedChar }
+                charRefs={ charRefs }
+            />, 
+            newItemLoading)
+    }, [process])
+
     return (
         <div className="char__list">
-            { 
-                setContant(
-                    process, 
-                    View, 
-                    newItemLoading, 
-                    characters, 
-                    onCharSelected, 
-                    focusOnSelectedChar, 
-                    charRefs)
-            }
+            { elements }
             <button 
                 className="button button__main button__long"
                 disabled={ newItemLoading }
@@ -109,12 +94,7 @@ const CharList = (props) => {
     )
 }
 
-function View ({ 
-    characters, 
-    onCharSelected, 
-    focusOnSelectedChar, 
-    charRefs }) {
-
+function View ({ characters, onCharSelected, focusOnSelectedChar, charRefs }) {
     const elements = characters.map((char, i) => {
         const imgContainStyle = char.thumbnail.split('/')[10] === 'image_not_available.jpg' 
                             || char.thumbnail.split('/')[10] === '4c002e0305708.gif'
@@ -122,7 +102,8 @@ function View ({
                                     : null;
                         
         return (
-            <li className="char__item" 
+            <li 
+                className="char__item" 
                 tabIndex={0} 
                 key={ char.id } 
                 ref={ el => charRefs.current[i] = el }
@@ -132,7 +113,8 @@ function View ({
                         onCharSelected(char.id);
                         focusOnSelectedChar(i);
                     }
-                } }>
+                }}
+            >
                 <img src={ char.thumbnail } alt={ char.name } style={ imgContainStyle }/>
                 <div className="char__name">{ char.name }</div>
             </li>
